@@ -1,0 +1,512 @@
+import React, { useState } from 'react';
+import { 
+  Menu, 
+  X, 
+  Linkedin, 
+  Mail, 
+  ArrowRight, 
+  Award, 
+  TrendingUp, 
+  Users, 
+  Briefcase, 
+  BookOpen, 
+  MessageSquare,
+  Globe,
+  ChevronRight
+} from 'lucide-react';
+
+// 模擬數據 - 請替換成您的真實資料
+const personalData = {
+  name: "張志豪 (Alex Chang)",
+  title: "資深產品成長總監 | 數據驅動策略專家",
+  tagline: "協助企業從 0 到 1 打造可擴展的產品，並通過數據洞察驅動由 1 到 100 的營收增長。",
+  location: "台北市, 台灣",
+  email: "alex.chang@example.com",
+  linkedin: "linkedin.com/in/alexchang-demo",
+  heroImage: "https://images.unsplash.com/photo-1556157382-97eda2d622ca?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80", // 替換為您的專業頭像
+  stats: [
+    { label: "帶領團隊規模", value: "25+" },
+    { label: "年度營收增長", value: "150%" },
+    { label: "專案成功交付", value: "40+" },
+    { label: "行業經驗", value: "10年" }
+  ]
+};
+
+const experiences = [
+  {
+    id: 1,
+    role: "產品成長總監 (Director of Product Growth)",
+    company: "TechNova Solutions",
+    period: "2021 - Present",
+    description: "領導跨職能團隊（產品、行銷、數據），負責亞太區市場擴張策略。",
+    achievements: [
+      "透過優化用戶引導流程 (Onboarding)，在 6 個月內將付費轉化率提升了 35%。",
+      "主導新市場進入策略，成功在東南亞地區獲得首批 50 萬用戶。",
+      "建立內部數據分析儀表板，縮短決策週期約 40%。"
+    ],
+    skills: ["Growth Hacking", "Team Leadership", "Data Analysis"]
+  },
+  {
+    id: 2,
+    role: "資深產品經理 (Senior Product Manager)",
+    company: "Alpha FinTech",
+    period: "2018 - 2021",
+    description: "負責核心支付產品線，專注於用戶體驗優化與合規性整合。",
+    achievements: [
+      "重新設計支付結帳流程，降低購物車放棄率 20%。",
+      "協調法務與技術團隊，確保產品符合 GDPR 與在地金融法規。",
+      "獲得年度最佳員工獎 (Employee of the Year 2019)。"
+    ],
+    skills: ["FinTech", "Product Strategy", "UX Design"]
+  }
+];
+
+const insights = [
+  {
+    id: 1,
+    title: "產品主導成長 (PLG) 在 B2B 市場的實際應用",
+    summary: "許多人談論 PLG，但鮮少人提及在傳統銷售導向企業中轉型的陣痛期。這篇文章分析了我如何平衡銷售團隊需求與產品自助服務化的過程...",
+    date: "2023 Oct",
+    category: "Product Strategy",
+    readTime: "5 min read"
+  },
+  {
+    id: 2,
+    title: "數據陷阱：為什麼你的 A/B 測試總是無效？",
+    summary: "盲目追求統計顯著性而忽略業務背景是新手常犯的錯誤。本文分享了三個我在職業生涯早期學到的慘痛教訓。",
+    date: "2023 Aug",
+    category: "Data Analytics",
+    readTime: "7 min read"
+  },
+  {
+    id: 3,
+    title: "打造高績效遠端團隊的 5 個非技術性關鍵",
+    summary: "工具只是輔助，文化才是核心。探討如何在分散式團隊中建立心理安全感與當責文化。",
+    date: "2023 May",
+    category: "Leadership",
+    readTime: "4 min read"
+  }
+];
+
+// 組件：導航列
+const Navbar = ({ activeTab, setActiveTab, mobileMenuOpen, setMobileMenuOpen }) => {
+  const navItems = [
+    { id: 'home', label: '首頁' },
+    { id: 'about', label: '關於我' },
+    { id: 'experience', label: '經歷與成就' },
+    { id: 'insights', label: '專業觀點' },
+    { id: 'contact', label: '聯繫我' }
+  ];
+
+  return (
+    <nav className="fixed top-0 left-0 right-0 bg-white/90 backdrop-blur-md shadow-sm z-50 border-b border-gray-100">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-16">
+          <div className="flex-shrink-0 flex items-center cursor-pointer" onClick={() => setActiveTab('home')}>
+            <span className="font-bold text-2xl text-slate-800 tracking-tight">AC.</span>
+          </div>
+          
+          {/* Desktop Menu */}
+          <div className="hidden md:flex space-x-8">
+            {navItems.map((item) => (
+              <button
+                key={item.id}
+                onClick={() => setActiveTab(item.id)}
+                className={`relative px-1 py-2 text-sm font-medium transition-colors duration-200 ${
+                  activeTab === item.id 
+                    ? 'text-blue-600' 
+                    : 'text-slate-500 hover:text-slate-800'
+                }`}
+              >
+                {item.label}
+                {activeTab === item.id && (
+                  <span className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 rounded-full animate-fade-in"></span>
+                )}
+              </button>
+            ))}
+          </div>
+
+          {/* Mobile Menu Button */}
+          <div className="md:hidden flex items-center">
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="text-slate-500 hover:text-slate-800 focus:outline-none"
+            >
+              {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile Menu */}
+      {mobileMenuOpen && (
+        <div className="md:hidden bg-white border-b border-gray-100 absolute w-full">
+          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+            {navItems.map((item) => (
+              <button
+                key={item.id}
+                onClick={() => {
+                  setActiveTab(item.id);
+                  setMobileMenuOpen(false);
+                }}
+                className={`block w-full text-left px-3 py-4 rounded-md text-base font-medium ${
+                  activeTab === item.id
+                    ? 'bg-blue-50 text-blue-600'
+                    : 'text-slate-600 hover:bg-slate-50 hover:text-slate-800'
+                }`}
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+    </nav>
+  );
+};
+
+// 頁面組件：首頁
+const Home = ({ setActiveTab }) => (
+  <div className="animate-fade-in pt-20 md:pt-32 pb-16">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="flex flex-col md:flex-row items-center gap-12">
+        <div className="w-full md:w-1/2 space-y-8">
+          <div className="inline-flex items-center px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-sm font-semibold tracking-wide uppercase">
+            Open to Opportunities
+          </div>
+          <h1 className="text-4xl md:text-6xl font-extrabold text-slate-900 leading-tight">
+            不只是工作，<br/>
+            而是創造 <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">商業影響力</span>。
+          </h1>
+          <p className="text-lg md:text-xl text-slate-600 leading-relaxed max-w-lg">
+            {personalData.tagline}
+          </p>
+          <div className="flex flex-wrap gap-4 pt-4">
+            <button 
+              onClick={() => setActiveTab('experience')}
+              className="px-8 py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-all shadow-lg hover:shadow-blue-500/30 flex items-center gap-2"
+            >
+              查看我的經歷 <ArrowRight size={18} />
+            </button>
+            <button 
+              onClick={() => setActiveTab('contact')}
+              className="px-8 py-3 rounded-lg bg-white text-slate-700 border border-slate-200 font-semibold hover:bg-slate-50 hover:border-slate-300 transition-all"
+            >
+              聯繫我
+            </button>
+          </div>
+          
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 pt-8 border-t border-slate-100">
+            {personalData.stats.map((stat, index) => (
+              <div key={index} className="space-y-1">
+                <div className="text-2xl md:text-3xl font-bold text-slate-900">{stat.value}</div>
+                <div className="text-xs md:text-sm text-slate-500 uppercase tracking-wide">{stat.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+        
+        <div className="w-full md:w-1/2 relative">
+          <div className="relative aspect-square md:aspect-[4/5] overflow-hidden rounded-2xl shadow-2xl">
+            <img 
+              src={personalData.heroImage} 
+              alt={personalData.name} 
+              className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-700"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent"></div>
+            <div className="absolute bottom-6 left-6 text-white">
+              <div className="font-bold text-xl">{personalData.name}</div>
+              <div className="text-white/80">{personalData.title}</div>
+            </div>
+          </div>
+          {/* Decorative elements */}
+          <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-blue-100 rounded-full blur-2xl -z-10 opacity-60"></div>
+          <div className="absolute -top-6 -left-6 w-32 h-32 bg-indigo-100 rounded-full blur-2xl -z-10 opacity-60"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+// 頁面組件：關於我
+const About = () => (
+  <div className="animate-fade-in pt-24 pb-16 min-h-screen bg-slate-50">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="text-center mb-16">
+        <h2 className="text-3xl font-bold text-slate-900 mb-4">關於我與我的哲學</h2>
+        <div className="w-16 h-1 bg-blue-600 mx-auto rounded-full"></div>
+      </div>
+
+      <div className="bg-white rounded-2xl p-8 md:p-12 shadow-sm border border-slate-100 mb-12">
+        <h3 className="text-xl font-bold text-slate-800 mb-6 flex items-center gap-3">
+          <BookOpen className="text-blue-600" size={24} />
+          我的職業故事
+        </h3>
+        <div className="space-y-6 text-slate-600 leading-relaxed text-lg">
+          <p>
+            在過去的十年中，我從一名專注於代碼的軟體工程師，轉變為一名專注於商業價值的產品領導者。這個轉變源於一個簡單的領悟：
+            <span className="font-semibold text-slate-900 bg-yellow-100 px-1 mx-1">技術是槓桿，但商業策略是支點。</span>
+          </p>
+          <p>
+            我的職業生涯建立在解決複雜問題的基礎上。無論是協助初創公司尋找 Product-Market Fit，還是在大型企業中推動數位轉型，我始終堅持「數據導向」與「以人為本」的雙重原則。我相信，真正的創新發生在技術可行性、商業存續性與用戶需求的交集處。
+          </p>
+          <p>
+            作為 LinkedIn Top Voice 風格的實踐者，我不僅僅執行任務，我更致力於建立可複製的成功模式，並培育下一代的產品人才。
+          </p>
+        </div>
+      </div>
+
+      <div className="grid md:grid-cols-3 gap-6">
+        {[
+          { icon: <Briefcase className="w-8 h-8 text-blue-600" />, title: "策略思維", desc: "跳脫功能層面，從市場格局與商業模式思考產品定位。" },
+          { icon: <Users className="w-8 h-8 text-blue-600" />, title: "團隊賦能", desc: "打造心理安全環境，讓團隊成員敢於創新與承擔風險。" },
+          { icon: <TrendingUp className="w-8 h-8 text-blue-600" />, title: "結果導向", desc: "不迷信虛榮指標，專注於營收、留存與用戶終身價值。" }
+        ].map((item, idx) => (
+          <div key={idx} className="bg-white p-6 rounded-xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
+            <div className="mb-4 bg-blue-50 w-16 h-16 rounded-full flex items-center justify-center">
+              {item.icon}
+            </div>
+            <h4 className="text-lg font-bold text-slate-900 mb-2">{item.title}</h4>
+            <p className="text-slate-600 text-sm">{item.desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+);
+
+// 頁面組件：經歷
+const Experience = () => (
+  <div className="animate-fade-in pt-24 pb-16">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="flex flex-col md:flex-row justify-between items-end mb-12">
+        <div>
+          <h2 className="text-3xl font-bold text-slate-900 mb-2">經歷與成就</h2>
+          <p className="text-slate-500">專注於實際影響力 (Impact) 而非僅是職責 (Duties)</p>
+        </div>
+        <a 
+          href={personalData.linkedin} 
+          target="_blank" 
+          rel="noreferrer"
+          className="mt-4 md:mt-0 flex items-center gap-2 text-blue-600 font-semibold hover:text-blue-700"
+        >
+          <Linkedin size={20} /> 查看完整 LinkedIn 檔案
+        </a>
+      </div>
+
+      <div className="space-y-8">
+        {experiences.map((exp) => (
+          <div key={exp.id} className="relative pl-8 md:pl-0">
+            {/* Timeline Line (Desktop) */}
+            <div className="hidden md:block absolute left-[20%] top-0 bottom-0 w-px bg-slate-200"></div>
+            
+            <div className="md:flex gap-8 group">
+              {/* Left Column: Company & Date */}
+              <div className="md:w-1/5 mb-2 md:mb-0 md:text-right relative">
+                <div className="hidden md:block absolute right-[-1.6rem] top-1.5 w-3 h-3 bg-white border-2 border-blue-600 rounded-full z-10 group-hover:bg-blue-600 transition-colors"></div>
+                <div className="font-bold text-slate-900 text-lg">{exp.company}</div>
+                <div className="text-sm text-slate-500 font-mono mt-1">{exp.period}</div>
+              </div>
+
+              {/* Right Column: Details */}
+              <div className="md:w-4/5 bg-white p-6 rounded-xl border border-slate-100 shadow-sm hover:shadow-lg transition-all hover:border-blue-100">
+                <h3 className="text-xl font-bold text-slate-800 mb-1">{exp.role}</h3>
+                <p className="text-slate-600 mb-6 italic border-l-4 border-slate-200 pl-3 py-1">{exp.description}</p>
+                
+                <div className="mb-6">
+                  <h4 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-3">Key Achievements</h4>
+                  <ul className="space-y-3">
+                    {exp.achievements.map((ach, i) => (
+                      <li key={i} className="flex items-start gap-3 text-slate-700">
+                        <Award className="flex-shrink-0 text-amber-500 mt-1" size={18} />
+                        <span>{ach}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="flex flex-wrap gap-2">
+                  {exp.skills.map((skill, i) => (
+                    <span key={i} className="px-3 py-1 bg-slate-100 text-slate-600 text-xs font-medium rounded-full">
+                      {skill}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+);
+
+// 頁面組件：專業觀點
+const Insights = () => (
+  <div className="animate-fade-in pt-24 pb-16 bg-slate-50 min-h-screen">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="text-center mb-16">
+        <h2 className="text-3xl font-bold text-slate-900 mb-4">專業觀點</h2>
+        <p className="text-slate-500 max-w-2xl mx-auto">
+          分享我在行業中的觀察、學習與反思。我相信分享知識是建立專業權威的最佳途徑。
+        </p>
+      </div>
+
+      <div className="grid md:grid-cols-3 gap-8">
+        {insights.map((item) => (
+          <div key={item.id} className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col h-full border border-slate-100 group">
+            <div className="p-6 flex-1 flex flex-col">
+              <div className="flex justify-between items-center mb-4 text-xs font-semibold uppercase tracking-wider">
+                <span className="text-blue-600 bg-blue-50 px-2 py-1 rounded">{item.category}</span>
+                <span className="text-slate-400">{item.date}</span>
+              </div>
+              <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-blue-600 transition-colors">
+                {item.title}
+              </h3>
+              <p className="text-slate-600 text-sm leading-relaxed mb-6 flex-1">
+                {item.summary}
+              </p>
+              <div className="flex items-center justify-between pt-4 border-t border-slate-50">
+                <span className="text-xs text-slate-400 flex items-center gap-1">
+                  <BookOpen size={14} /> {item.readTime}
+                </span>
+                <button className="text-sm font-semibold text-blue-600 flex items-center gap-1 hover:gap-2 transition-all">
+                  閱讀更多 <ChevronRight size={16} />
+                </button>
+              </div>
+            </div>
+          </div>
+        ))}
+        
+        {/* Call to action card */}
+        <div className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-xl overflow-hidden shadow-lg flex flex-col justify-center items-center text-center p-8 text-white">
+          <MessageSquare className="w-12 h-12 mb-4 opacity-80" />
+          <h3 className="text-xl font-bold mb-2">想討論更多？</h3>
+          <p className="text-blue-100 mb-6 text-sm">我定期在 LinkedIn 上分享簡短的每日觀察。歡迎追蹤交流。</p>
+          <a href={personalData.linkedin} target="_blank" rel="noreferrer" className="px-6 py-2 bg-white text-blue-600 rounded-full font-semibold text-sm hover:bg-blue-50 transition-colors">
+            前往 LinkedIn
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+// 頁面組件：聯繫
+const Contact = () => (
+  <div className="animate-fade-in pt-24 pb-16 min-h-screen flex items-center">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+      <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-100">
+        <div className="flex flex-col md:flex-row">
+          
+          {/* Info Side */}
+          <div className="bg-slate-900 text-white p-10 md:w-2/5 flex flex-col justify-between">
+            <div>
+              <h2 className="text-3xl font-bold mb-6">Let's Connect</h2>
+              <p className="text-slate-300 mb-8 leading-relaxed">
+                我目前開放討論新的機會。如果您正在尋找一位能帶來具體商業成果的領導者，請隨時聯繫我。
+              </p>
+            </div>
+            
+            <div className="space-y-6">
+              <a href={`mailto:${personalData.email}`} className="flex items-center gap-4 text-slate-300 hover:text-white transition-colors">
+                <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
+                  <Mail size={20} />
+                </div>
+                <div>
+                  <div className="text-xs uppercase tracking-wider opacity-50">Email</div>
+                  <div className="font-medium">{personalData.email}</div>
+                </div>
+              </a>
+              
+              <a href={personalData.linkedin} target="_blank" rel="noreferrer" className="flex items-center gap-4 text-slate-300 hover:text-white transition-colors">
+                <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
+                  <Linkedin size={20} />
+                </div>
+                <div>
+                  <div className="text-xs uppercase tracking-wider opacity-50">LinkedIn</div>
+                  <div className="font-medium">Connect on LinkedIn</div>
+                </div>
+              </a>
+
+              <div className="flex items-center gap-4 text-slate-300">
+                <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
+                  <Globe size={20} />
+                </div>
+                <div>
+                  <div className="text-xs uppercase tracking-wider opacity-50">Location</div>
+                  <div className="font-medium">{personalData.location}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Form Side (Mock) */}
+          <div className="p-10 md:w-3/5 bg-white">
+            <h3 className="text-xl font-bold text-slate-800 mb-6">發送訊息</h3>
+            <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">姓名</label>
+                <input type="text" className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all" placeholder="獵頭顧問 / 招聘經理" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">Email</label>
+                <input type="email" className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all" placeholder="name@company.com" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">訊息內容</label>
+                <textarea rows={4} className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all" placeholder="嗨，我對你的經歷很感興趣，想聊聊關於..."></textarea>
+              </div>
+              <button className="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition-colors shadow-lg hover:shadow-blue-500/30">
+                發送訊息
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+// 主應用程式組件
+const App = () => {
+  const [activeTab, setActiveTab] = useState('home');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // 根據 activeTab 渲染對應內容
+  const renderContent = () => {
+    switch (activeTab) {
+      case 'home': return <Home setActiveTab={setActiveTab} />;
+      case 'about': return <About />;
+      case 'experience': return <Experience />;
+      case 'insights': return <Insights />;
+      case 'contact': return <Contact />;
+      default: return <Home setActiveTab={setActiveTab} />;
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-white text-slate-900 font-sans selection:bg-blue-100 selection:text-blue-900">
+      <Navbar 
+        activeTab={activeTab} 
+        setActiveTab={setActiveTab} 
+        mobileMenuOpen={mobileMenuOpen}
+        setMobileMenuOpen={setMobileMenuOpen}
+      />
+      <main>
+        {renderContent()}
+      </main>
+      
+      {/* Footer */}
+      <footer className="bg-white py-8 border-t border-slate-100">
+        <div className="max-w-6xl mx-auto px-4 text-center">
+          <p className="text-slate-400 text-sm">
+            © {new Date().getFullYear()} {personalData.name}. Designed for professional impact.
+          </p>
+        </div>
+      </footer>
+    </div>
+  );
+};
+
+export default App;
